@@ -1,11 +1,12 @@
 ; =============================================================================
 ; Inno Setup Script - TickPen (.NET 8 WPF Self-Contained)
-; Requiere Inno Setup 6.x (https://jrsoftware.org/isinfo.php)
+; Asistente clásico de instalación de Windows (Next -> Next -> Elegir ruta)
 ; =============================================================================
 
 #define MyAppName "TickPen"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "TickPen Open Source"
+#define MyAppURL "https://github.com/iLojem/TickPen"
 #define MyAppExeName "TickPen.exe"
 
 [Setup]
@@ -14,41 +15,60 @@ AppId={{8F4C2A91-6E3B-4D17-9A5E-2B8F7C4D91E2}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
+AppPublisherURL={#MyAppURL}
+AppSupportURL={#MyAppURL}
+AppUpdatesURL={#MyAppURL}/releases
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
+
+; Mostrar todas las pantallas clásicas del Wizard (Bienvenida, Licencia, Carpeta, Menú Inicio)
+DisableWelcomePage=no
+DisableDirPage=no
+DisableProgramGroupPage=no
+DisableReadyPage=no
+LicenseFile=..\LICENSE
 AllowNoIcons=yes
+
+; Identidad visual del instalador (icono y banners con el logo de TickPen)
 SetupIconFile=..\Assets\TickPen.ico
-; Salida del instalador compilado
+WizardStyle=modern
+WizardImageFile=wizard-sidebar.bmp
+WizardSmallImageFile=wizard-small.bmp
+UninstallDisplayIcon={app}\{#MyAppExeName}
+UninstallDisplayName={#MyAppName}
+
+; Salida y compresión máxima
 OutputDir=..\dist
 OutputBaseFilename=TickPen-Setup-v{#MyAppVersion}-win-x64
-; Compresión máxima para reducir tamaño del ejecutable autocontenido
 Compression=lzma2/ultra64
 SolidCompression=yes
-WizardStyle=modern
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-; Permite instalar sin privilegios de administrador si el usuario lo prefiere
+
+; Permite elegir instalación para el usuario actual (sin admin) o para todos los usuarios
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-UninstallDisplayIcon={app}\{#MyAppExeName}
+
+; Cierra TickPen automáticamente si está abierto al actualizar/instalar
+CloseApplications=yes
 
 [Languages]
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 Name: "startupicon"; Description: "Iniciar {#MyAppName} automáticamente con Windows"; GroupDescription: "Opciones adicionales:"; Flags: unchecked
 
 [Files]
-; Toma el ejecutable único autocontenido generado por `dotnet publish`
+; Ejecutable único autocontenido generado por `dotnet publish`
 Source: "..\publish\win-x64\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 ; Menú Inicio
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-; Acceso directo en el Escritorio (si el usuario marcó la casilla)
+; Acceso directo en el Escritorio (marcado por defecto)
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 ; Inicio automático con Windows (opcional)
 Name: "{userstartup}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: startupicon
