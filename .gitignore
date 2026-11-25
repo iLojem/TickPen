@@ -1,0 +1,34 @@
+# .NET / Visual Studio / Rider build artifacts
+bin/
+obj/
+publish/
+dist/
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.pdb
+*.nupkg
+*.snupkg
+
+# Logs & temporary files
+*.log
+*.tmp
+*.bak
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Secrets, keys & local environment files (safety net)
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+*.p12
+*.snk
+*.secrets.json
+appsettings.Development.json
+appsettings.Local.json
