@@ -35,12 +35,14 @@ public static class NativeMethods
     // Códigos Virtual-Key (VK_*)
     public const uint VK_C = 0x43;
     public const uint VK_D = 0x44;
+    public const uint VK_F = 0x46;
     public const uint VK_H = 0x48;
 
     // Identificadores internos de atajos globales
     public const int HOTKEY_TOGGLE_DRAW = 9001;    // Ctrl + Shift + D
     public const int HOTKEY_TOGGLE_TOOLBAR = 9002; // Ctrl + Shift + H
     public const int HOTKEY_CLEAR_SCREEN = 9003;   // Ctrl + Shift + C
+    public const int HOTKEY_TOGGLE_FADE = 9004;    // Ctrl + Shift + F
 
     #region P/Invoke Declarations
 
@@ -140,6 +142,7 @@ public static class NativeMethods
         RegisterHotKey(hwnd, HOTKEY_TOGGLE_DRAW, modifiers, VK_D);
         RegisterHotKey(hwnd, HOTKEY_TOGGLE_TOOLBAR, modifiers, VK_H);
         RegisterHotKey(hwnd, HOTKEY_CLEAR_SCREEN, modifiers, VK_C);
+        RegisterHotKey(hwnd, HOTKEY_TOGGLE_FADE, modifiers, VK_F);
     }
 
     /// <summary>
@@ -152,6 +155,7 @@ public static class NativeMethods
         UnregisterHotKey(hwnd, HOTKEY_TOGGLE_DRAW);
         UnregisterHotKey(hwnd, HOTKEY_TOGGLE_TOOLBAR);
         UnregisterHotKey(hwnd, HOTKEY_CLEAR_SCREEN);
+        UnregisterHotKey(hwnd, HOTKEY_TOGGLE_FADE);
     }
 
     #endregion

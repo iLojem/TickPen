@@ -21,6 +21,7 @@
 ## Características Principales
 
 - **Modo Click-Through nativo (Win32):** interactúa con TradingView, MetaTrader, Excel, PowerPoint o cualquier ventana mientras tus anotaciones siguen visibles en pantalla.
+- **Modo Fade (auto-desvanecimiento):** dibuja señales temporales que se desvanecen suavemente tras `2s`, `4s`, `6s` o `10s` (ideal para sesiones de trading en vivo y presentaciones sin tener que borrar manualmente).
 - **Lápiz y Resaltador fluidos:** motor `InkCanvas` con suavizado de curvas (`FitToCurve`) y resaltador semitransparente.
 - **Formas geométricas con vista previa en vivo:** Línea recta, Flecha con punta calculada, Rectángulo y Elipse *(mantén `Shift` para ángulos de 45°, cuadrados o círculos perfectos)*.
 - **Herramienta de Texto:** haz clic en cualquier punto para escribir directamente sobre tus gráficos o diapositivas (`Enter` para fijar, `Esc` para cancelar).
@@ -37,6 +38,7 @@
 | Atajo | Acción |
 | :--- | :--- |
 | `Ctrl + Shift + D` | Alternar entre **Modo Cursor** (*Click-Through*) y **Modo Dibujo** (global) |
+| `Ctrl + Shift + F` | Activar / Desactivar **Modo Fade** (auto-desvanecimiento) (global) |
 | `Ctrl + Shift + H` | Ocultar / Mostrar la barra de herramientas (global) |
 | `Ctrl + Shift + C` | Limpiar toda la pantalla (global) |
 | `Ctrl + Z` / `Ctrl + Y` | Deshacer / Rehacer |

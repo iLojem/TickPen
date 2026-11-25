@@ -35,6 +35,11 @@
                     MouseLeftButtonDown="VectorCanvas_MouseLeftButtonDown"
                     MouseMove="VectorCanvas_MouseMove"
                     MouseLeftButtonUp="VectorCanvas_MouseLeftButtonUp" />
+
+            <!-- Capa 2B: Elementos efímeros con animación Fade-Out automática -->
+            <Canvas x:Name="FadeCanvas"
+                    Background="Transparent"
+                    IsHitTestVisible="False" />
         </Grid>
 
         <!-- Capa 3: Selector de región para Captura de Pantalla -->

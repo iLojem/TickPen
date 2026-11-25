@@ -317,6 +317,35 @@
                     </UniformGrid>
                 </Border>
 
+                <!-- Botón Modo Fade (estilo ScreenBrush: desvanece dibujos tras X segundos) -->
+                <Button x:Name="BtnFadeMode"
+                        Style="{StaticResource MiniBtnStyle}"
+                        Height="28"
+                        Margin="2,6,2,0"
+                        ToolTip="Modo Fade: los dibujos se desvanecen solos (Ctrl+Shift+F)"
+                        Click="BtnFadeMode_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Path Data="M12,2 L13.8,7.2 L19,9 L13.8,10.8 L12,16 L10.2,10.8 L5,9 L10.2,7.2 Z M18.5,14 L19.4,16.6 L22,17.5 L19.4,18.4 L18.5,21 L17.6,18.4 L15,17.5 L17.6,16.6 Z"
+                              Fill="#FF38BDF8" Stretch="Uniform" Width="13" Height="13" Margin="0,0,5,0" />
+                        <TextBlock x:Name="FadeBtnLabel" Text="Fade" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Selector de tiempo X para el Modo Fade -->
+                <Border x:Name="FadeDurationPanel"
+                        Visibility="Collapsed"
+                        Background="#1AFFFFFF"
+                        CornerRadius="8"
+                        Padding="2"
+                        Margin="2,4,2,0">
+                    <UniformGrid Columns="2">
+                        <Button x:Name="BtnFade2s" Style="{StaticResource MiniBtnStyle}" Content="2s" ToolTip="Desvanecer a los 2 segundos" Click="FadeDelay_Click" />
+                        <Button x:Name="BtnFade4s" Style="{StaticResource MiniBtnStyle}" Content="4s" ToolTip="Desvanecer a los 4 segundos" Click="FadeDelay_Click" />
+                        <Button x:Name="BtnFade6s" Style="{StaticResource MiniBtnStyle}" Content="6s" ToolTip="Desvanecer a los 6 segundos" Click="FadeDelay_Click" />
+                        <Button x:Name="BtnFade10s" Style="{StaticResource MiniBtnStyle}" Content="10s" ToolTip="Desvanecer a los 10 segundos" Click="FadeDelay_Click" />
+                    </UniformGrid>
+                </Border>
+
                 <Separator Background="{StaticResource DividerBrush}" Margin="2,6,2,6" />
 
                 <!-- Bloque 2: Historial y Control de Lienzo -->

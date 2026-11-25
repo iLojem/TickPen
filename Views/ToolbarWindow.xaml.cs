@@ -18,6 +18,7 @@ public partial class ToolbarWindow : Window
 
     private readonly Dictionary<DrawingTool, Button> _toolButtons;
     private readonly Dictionary<Button, double> _thicknessMap;
+    private readonly Dictionary<Button, double> _fadeDelayMap;
 
     // Geometrías para el icono de Ocultar / Mostrar tinta
     private static readonly Geometry EyeOpenGeometry = Geometry.Parse(
@@ -52,9 +53,18 @@ public partial class ToolbarWindow : Window
             [BtnSize4] = 14.0
         };
 
+        _fadeDelayMap = new Dictionary<Button, double>
+        {
+            [BtnFade2s] = 2.0,
+            [BtnFade4s] = 4.0,
+            [BtnFade6s] = 6.0,
+            [BtnFade10s] = 10.0
+        };
+
         // Suscribirse a eventos del lienzo para mantener la UI siempre sincronizada
         _overlay.HistoryChanged += OnOverlayHistoryChanged;
         _overlay.ToolChanged += OnOverlayToolChanged;
+        _overlay.FadeModeChanged += OnOverlayFadeModeChanged;
         _overlay.RequestToolbarVisibility += visible =>
         {
             Dispatcher.Invoke(() => Visibility = visible ? Visibility.Visible : Visibility.Hidden);
@@ -68,6 +78,8 @@ public partial class ToolbarWindow : Window
     {
         UpdateActiveToolVisual(DrawingTool.Cursor);
         UpdateEraserModeVisual(_currentEraserMode);
+        ApplySelectedFadeDelay(BtnFade4s);
+        UpdateFadeModeVisual(false);
 
         // Seleccionar primer color (Rojo) y segundo grosor (4 px) por defecto
         if (ColorGrid.Children.Count > 0 && ColorGrid.Children[0] is Button firstColor)
@@ -124,6 +136,11 @@ public partial class ToolbarWindow : Window
 
                 case NativeMethods.HOTKEY_CLEAR_SCREEN:
                     _overlay.ClearAll();
+                    handled = true;
+                    break;
+
+                case NativeMethods.HOTKEY_TOGGLE_FADE:
+                    _overlay.ToggleFadeMode();
                     handled = true;
                     break;
             }
@@ -208,6 +225,49 @@ public partial class ToolbarWindow : Window
     {
         BtnEraseStroke.Tag = mode == EraserMode.ByStroke ? "Active" : null;
         BtnErasePoint.Tag = mode == EraserMode.ByPoint ? "Active" : null;
+    }
+
+    private void BtnFadeMode_Click(object sender, RoutedEventArgs e)
+    {
+        _overlay.ToggleFadeMode();
+    }
+
+    private void FadeDelay_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn)
+        {
+            ApplySelectedFadeDelay(btn);
+        }
+    }
+
+    private void OnOverlayFadeModeChanged(bool enabled)
+    {
+        Dispatcher.Invoke(() => UpdateFadeModeVisual(enabled));
+    }
+
+    private void UpdateFadeModeVisual(bool enabled)
+    {
+        BtnFadeMode.Tag = enabled ? "Active" : null;
+        FadeBtnLabel.Text = enabled ? $"Fade {(int)_overlay.FadeDelaySeconds}s" : "Fade";
+        FadeDurationPanel.Visibility = enabled ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void ApplySelectedFadeDelay(Button selectedButton)
+    {
+        foreach (var (btn, seconds) in _fadeDelayMap)
+        {
+            bool isSelected = ReferenceEquals(btn, selectedButton);
+            btn.Tag = isSelected ? "Active" : null;
+            if (isSelected)
+            {
+                _overlay.SetFadeDelay(seconds);
+            }
+        }
+
+        if (_overlay.IsFadeEnabled)
+        {
+            FadeBtnLabel.Text = $"Fade {(int)_overlay.FadeDelaySeconds}s";
+        }
     }
 
     #endregion

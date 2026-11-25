@@ -7,6 +7,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TickPen.Interop;
@@ -53,17 +54,27 @@ public partial class OverlayWindow : Window
     private Point _regionStartPoint;
     private ScreenshotDestination _pendingScreenshotDestination;
 
+    // Estado de Modo Fade (desvanecimiento automático estilo ScreenBrush)
+    private bool _isFadeEnabled;
+    private double _fadeDelaySeconds = 4.0;
+    private static readonly TimeSpan FadeOutDuration = TimeSpan.FromMilliseconds(650);
+
     /// <summary>Notifica cambios en el historial para habilitar/deshabilitar Undo/Redo en la toolbar.</summary>
     public event Action<bool, bool>? HistoryChanged;
 
     /// <summary>Notifica a la barra de herramientas cuando cambia la herramienta activa.</summary>
     public event Action<DrawingTool>? ToolChanged;
 
+    /// <summary>Notifica cambios en el estado del Modo Fade.</summary>
+    public event Action<bool>? FadeModeChanged;
+
     /// <summary>Permite ocultar temporalmente la ToolbarWindow durante la captura de pantalla.</summary>
     public event Action<bool>? RequestToolbarVisibility;
 
     public DrawingTool CurrentTool => _currentTool;
     public bool IsInkVisible => DrawingLayer.Visibility == Visibility.Visible;
+    public bool IsFadeEnabled => _isFadeEnabled;
+    public double FadeDelaySeconds => _fadeDelaySeconds;
     public bool CanUndo => _undoStack.Count > 0;
     public bool CanRedo => _redoStack.Count > 0;
 
@@ -244,6 +255,9 @@ public partial class OverlayWindow : Window
     {
         CommitActiveTextBox();
 
+        // Limpiar también cualquier trazo que esté actualmente desvaneciéndose
+        FadeCanvas.Children.Clear();
+
         if (MainInkCanvas.Strokes.Count == 0 && VectorCanvas.Children.Count == 0)
             return;
 
@@ -257,6 +271,22 @@ public partial class OverlayWindow : Window
         });
 
         PushAction(new ClearCanvasAction(MainInkCanvas.Strokes, VectorCanvas, strokesSnapshot, elementsSnapshot));
+    }
+
+    public void SetFadeMode(bool enabled)
+    {
+        _isFadeEnabled = enabled;
+        FadeModeChanged?.Invoke(_isFadeEnabled);
+    }
+
+    public void ToggleFadeMode()
+    {
+        SetFadeMode(!_isFadeEnabled);
+    }
+
+    public void SetFadeDelay(double seconds)
+    {
+        _fadeDelaySeconds = Math.Clamp(seconds, 0.5, 30.0);
     }
 
     public void ToggleInkVisibility()
@@ -300,12 +330,42 @@ public partial class OverlayWindow : Window
 
     private void MainInkCanvas_StrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
     {
-        // El registro en Undo se centraliza en Strokes_StrokesChanged para cubrir también EraseByPoint
+        if (!_isFadeEnabled) return;
+
+        // En Modo Fade convertimos el trazo recién dibujado a un Path en FadeCanvas
+        // para animar su opacidad con aceleración GPU y eliminarlo suavemente tras X segundos.
+        var stroke = e.Stroke;
+        ExecuteInternalStrokeChange(() =>
+        {
+            if (MainInkCanvas.Strokes.Contains(stroke))
+                MainInkCanvas.Strokes.Remove(stroke);
+        });
+
+        var attrs = stroke.DrawingAttributes;
+        var brush = new SolidColorBrush(attrs.Color);
+        brush.Freeze();
+
+        var geometry = stroke.GetGeometry(attrs);
+        geometry.Freeze();
+
+        var fadePath = new Path
+        {
+            Data = geometry,
+            Fill = brush,
+            IsHitTestVisible = false
+        };
+
+        double initialOpacity = attrs.IsHighlighter ? 0.45 : 1.0;
+        ScheduleFadeOut(fadePath, initialOpacity);
     }
 
     private void Strokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
     {
         if (_isInternalStrokeChange) return;
+
+        // Si el Modo Fade está activo y es un nuevo trazo, lo maneja MainInkCanvas_StrokeCollected
+        if (_isFadeEnabled && e.Added.Count == 1 && e.Removed.Count == 0)
+            return;
 
         if (e.Added.Count == 1 && e.Removed.Count == 0)
         {
@@ -315,6 +375,32 @@ public partial class OverlayWindow : Window
         {
             PushAction(new ModifyStrokesAction(MainInkCanvas.Strokes, e.Added, e.Removed));
         }
+    }
+
+    /// <summary>
+    /// Coloca un elemento en FadeCanvas, espera FadeDelaySeconds y lo desvanece suavemente hasta eliminarlo.
+    /// </summary>
+    private void ScheduleFadeOut(UIElement element, double initialOpacity = 1.0)
+    {
+        element.Opacity = initialOpacity;
+        FadeCanvas.Children.Add(element);
+
+        var fadeAnimation = new DoubleAnimation
+        {
+            From = initialOpacity,
+            To = 0.0,
+            BeginTime = TimeSpan.FromSeconds(_fadeDelaySeconds),
+            Duration = FadeOutDuration,
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
+            FillBehavior = FillBehavior.Stop
+        };
+
+        fadeAnimation.Completed += (_, _) =>
+        {
+            FadeCanvas.Children.Remove(element);
+        };
+
+        element.BeginAnimation(OpacityProperty, fadeAnimation);
     }
 
     // Soporte de borrador también para formas geométricas y texto en VectorCanvas
@@ -465,7 +551,15 @@ public partial class OverlayWindow : Window
             else
             {
                 UpdateShapeElement(_previewElement, _currentTool, _shapeStartPoint, endPoint);
-                PushAction(new AddElementAction(VectorCanvas, _previewElement));
+                if (_isFadeEnabled)
+                {
+                    VectorCanvas.Children.Remove(_previewElement);
+                    ScheduleFadeOut(_previewElement);
+                }
+                else
+                {
+                    PushAction(new AddElementAction(VectorCanvas, _previewElement));
+                }
             }
         }
 
@@ -676,8 +770,15 @@ public partial class OverlayWindow : Window
         Canvas.SetLeft(textBlock, left);
         Canvas.SetTop(textBlock, top);
 
-        VectorCanvas.Children.Add(textBlock);
-        PushAction(new AddElementAction(VectorCanvas, textBlock));
+        if (_isFadeEnabled)
+        {
+            ScheduleFadeOut(textBlock);
+        }
+        else
+        {
+            VectorCanvas.Children.Add(textBlock);
+            PushAction(new AddElementAction(VectorCanvas, textBlock));
+        }
     }
 
     private void CancelActiveTextBox()
