@@ -1,23 +1,23 @@
-# Política de Seguridad de TickPen
+# Security Policy
 
-## Garantías de Seguridad y Privacidad
+## Security & Privacy Guarantees
 
-TickPen está diseñado bajo el principio de **mínimo privilegio y operación 100% offline**:
+TickPen is designed around **least privilege and 100% offline operation**:
 
-1. **Cero tráfico de red:** La aplicación no abre sockets, no utiliza `HttpClient`, no consume APIs externas (ni de IA ni de terceros) y no envía telemetría.
-2. **Sin credenciales ni secretos:** No solicita ni almacena contraseñas, tokens ni claves API.
-3. **Acceso local mínimo:** Solo escribe en disco cuando el usuario elige explícitamente guardar una captura de pantalla mediante el diálogo nativo de Windows (`SaveFileDialog`).
-4. **Uso transparente de Win32 API (P/Invoke):**
-   - `user32.dll` (`GetWindowLongPtr`, `SetWindowLongPtr`): activa/desactiva `WS_EX_TRANSPARENT` para el modo *Click-Through* del lienzo.
-   - `user32.dll` (`RegisterHotKey`, `UnregisterHotKey`): registra los 3 atajos globales (`Ctrl+Shift+D`, `Ctrl+Shift+H`, `Ctrl+Shift+C`) y los libera al cerrar.
-   - `gdi32.dll` (`DeleteObject`): libera inmediatamente los handles GDI temporales al copiar capturas al portapapeles.
-5. **Dependencias mínimas:** Únicamente utiliza el paquete oficial de Microsoft `System.Drawing.Common` (`8.0.10`) sobre .NET 8 WPF.
-6. **Sin privilegios de administrador:** Tanto la aplicación como el instalador pueden ejecutarse y usarse sin elevación (`PrivilegesRequired=lowest`).
+1. **Zero network traffic:** The application opens no sockets, does not use `HttpClient`, consumes no external or AI APIs, and collects zero telemetry.
+2. **No credentials or secrets:** Never requests, stores, or transmits passwords, tokens, or API keys.
+3. **Minimal disk access:** Only writes to disk when the user explicitly saves a screenshot through the native Windows `SaveFileDialog`.
+4. **Transparent Win32 API (P/Invoke) usage:**
+   - `user32.dll` (`GetWindowLongPtr`, `SetWindowLongPtr`): toggles `WS_EX_TRANSPARENT` for native *Click-Through* mode on the overlay window.
+   - `user32.dll` (`RegisterHotKey`, `UnregisterHotKey`): registers the global shortcuts (`Ctrl+Shift+D`, `Ctrl+Shift+F`, `Ctrl+Shift+H`, `Ctrl+Shift+C`) and unregisters them cleanly on exit.
+   - `gdi32.dll` (`DeleteObject`): immediately frees temporary GDI bitmap handles after copying screenshots to the clipboard.
+5. **Minimal dependencies:** Uses only Microsoft's official `System.Drawing.Common` (`8.0.10`) package on top of .NET 8 WPF.
+6. **No admin rights required:** Both the application and the Inno Setup wizard run without administrator elevation by default (`PrivilegesRequired=lowest`).
 
-## Aviso sobre Windows SmartScreen
+## Windows SmartScreen Notice
 
-Al ser un proyecto open-source independiente sin certificado comercial de firma de código (*Code Signing*), Windows SmartScreen puede mostrar una advertencia preventiva la primera vez que se ejecuta un binario descargado. Cualquier usuario puede auditar el código fuente y compilar su propio `TickPen.exe` directamente con `dotnet publish`.
+Because TickPen is an independent open-source project without a commercial code-signing certificate, Windows SmartScreen may show a preventive warning the first time a downloaded binary is executed. Anyone can audit the full source code and build their own `TickPen.exe` locally using `dotnet publish`.
 
-## Cómo Reportar una Vulnerabilidad
+## Reporting a Vulnerability
 
-Si encuentras un problema de seguridad, por favor repórtalo de forma privada a través de la pestaña **Security → Advisories** del repositorio en GitHub en lugar de abrir un Issue público.
+If you discover a security issue, please report it privately through GitHub's **Security → Advisories** tab rather than opening a public issue.

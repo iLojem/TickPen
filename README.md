@@ -5,8 +5,14 @@
 <h1 align="center">TickPen</h1>
 
 <p align="center">
-  <strong>Herramienta open-source, ligera y nativa para anotar en tiempo real sobre cualquier ventana en Windows.</strong><br/>
-  Pensada para <strong>traders, analistas financieros, educadores y presentaciones en vivo</strong>.
+  <strong>Lightweight, native, 100% offline screen annotation tool for Windows.</strong><br/>
+  Built for <strong>traders, financial analysts, educators, and live presenters</strong>.
+</p>
+
+<p align="center">
+  <a href="https://github.com/iLojem/TickPen/releases/latest">
+    <img src="https://img.shields.io/badge/Download%20for%20Windows-v1.0.0-2563EB?style=for-the-badge&logo=windows" alt="Download TickPen for Windows" />
+  </a>
 </p>
 
 <p align="center">
@@ -18,57 +24,66 @@
 
 ---
 
-## Características Principales
+## Download
 
-- **Modo Click-Through nativo (Win32):** interactúa con TradingView, MetaTrader, Excel, PowerPoint o cualquier ventana mientras tus anotaciones siguen visibles en pantalla.
-- **Modo Fade (auto-desvanecimiento):** dibuja señales temporales que se desvanecen suavemente tras `2s`, `4s`, `6s` o `10s` (ideal para sesiones de trading en vivo y presentaciones sin tener que borrar manualmente).
-- **Lápiz y Resaltador fluidos:** motor `InkCanvas` con suavizado de curvas (`FitToCurve`) y resaltador semitransparente.
-- **Formas geométricas con vista previa en vivo:** Línea recta, Flecha con punta calculada, Rectángulo y Elipse *(mantén `Shift` para ángulos de 45°, cuadrados o círculos perfectos)*.
-- **Herramienta de Texto:** haz clic en cualquier punto para escribir directamente sobre tus gráficos o diapositivas (`Enter` para fijar, `Esc` para cancelar).
-- **Borrador dual:** borrado por trazo completo o por punto (compatible también con formas y texto).
-- **Historial Undo / Redo unificado:** `Ctrl+Z` y `Ctrl+Y` sobre trazos, formas, texto e incluso sobre *Limpiar Pantalla*.
-- **Ocultar / Mostrar tinta:** esconde tus anotaciones temporalmente sin perder tu análisis.
-- **Captura de pantalla con anotaciones:** captura una región seleccionada o la pantalla completa directamente al portapapeles o como archivo PNG.
-- **Barra flotante compacta y colapsable:** interfaz oscura arrastrable que nunca bloquea tu trabajo.
+- **[Download Windows Installer (`TickPen-Setup-v1.0.0-win-x64.exe`)](https://github.com/iLojem/TickPen/releases/latest/download/TickPen-Setup-v1.0.0-win-x64.exe)** *(Recommended — guided setup wizard with Desktop/Start Menu shortcuts and uninstaller)*
+- **[Download Portable (`TickPen.exe`)](https://github.com/iLojem/TickPen/releases/latest/download/TickPen.exe)** *(Single self-contained executable — no installation or .NET runtime required)*
+- Browse all releases: [GitHub Releases](https://github.com/iLojem/TickPen/releases)
+
+> **Windows SmartScreen Notice:** Because TickPen is an independent open-source project without a paid code-signing certificate, Windows may show a preventive warning on first run. Click **More info → Run anyway**, or build from source below.
 
 ---
 
-## Atajos de Teclado
+## Key Features
 
-| Atajo | Acción |
+- **Native Win32 Click-Through Mode:** Interact seamlessly with TradingView, MetaTrader, Excel, PowerPoint, or any active window while keeping your annotations visible on screen.
+- **Auto-Fade Mode (ScreenBrush-style):** Draw temporary callouts and highlights that smoothly fade out after **`2s`, `4s`, `6s`, or `10s`** — ideal for live trading sessions and presentations without manual erasing.
+- **Smooth Pen & Highlighter:** Hardware-accelerated WPF `InkCanvas` with curve smoothing (`FitToCurve`) and translucent highlighter strokes.
+- **Vector Shapes with Live Preview:** Draw **Lines**, **Arrows** (auto-calculated arrowheads), **Rectangles**, and **Ellipses** *(hold `Shift` for squares, circles, or 45° angles)*.
+- **Inline Text Tool:** Click anywhere on screen to type directly over charts or slides (`Enter` to commit, `Esc` to cancel).
+- **Dual Eraser:** Switch between **Erase by Stroke** and **Erase by Point** (works on both ink strokes and vector shapes/text).
+- **Unified Undo / Redo:** `Ctrl+Z` and `Ctrl+Y` across ink strokes, shapes, text, and even *Clear Screen*.
+- **Hide / Show Ink:** Temporarily hide your annotations without losing your markup.
+- **Built-in Screenshot Capture:** Capture a selected region or the full screen (including your annotations) directly to the clipboard or save as PNG.
+- **Compact Collapsible Toolbar:** Dark floating UI that stays on top, drags smoothly, and never gets in the way.
+
+---
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
 | :--- | :--- |
-| `Ctrl + Shift + D` | Alternar entre **Modo Cursor** (*Click-Through*) y **Modo Dibujo** (global) |
-| `Ctrl + Shift + F` | Activar / Desactivar **Modo Fade** (auto-desvanecimiento) (global) |
-| `Ctrl + Shift + H` | Ocultar / Mostrar la barra de herramientas (global) |
-| `Ctrl + Shift + C` | Limpiar toda la pantalla (global) |
-| `Ctrl + Z` / `Ctrl + Y` | Deshacer / Rehacer |
-| `Shift` (al dibujar formas) | Restringir a cuadrados, círculos o líneas a 45° |
+| `Ctrl + Shift + D` | Toggle between **Cursor Mode** (*Click-Through*) and **Draw Mode** (global) |
+| `Ctrl + Shift + F` | Toggle **Auto-Fade Mode** (global) |
+| `Ctrl + Shift + H` | Hide / Show the floating toolbar (global) |
+| `Ctrl + Shift + C` | Clear entire screen (global) |
+| `Ctrl + Z` / `Ctrl + Y` | Undo / Redo |
+| `Shift` *(while drawing shapes)* | Constrain to squares, circles, or 45° lines |
 
 ---
 
-## Privacidad y Seguridad
+## Privacy & Security
 
-TickPen es **100% local y offline**:
-- **Sin conexión a internet:** no realiza peticiones HTTP, no usa APIs externas ni servicios de IA.
-- **Sin telemetría ni rastreo:** no recopila datos de uso, capturas ni métricas.
-- **Código auditable:** únicamente interactúa con `user32.dll` (modo *Click-Through* y atajos globales) y `gdi32.dll` (liberación segura de handles al copiar capturas al portapapeles).
+TickPen is **100% local and offline**:
+- **Zero network traffic:** Makes no HTTP requests, uses no external APIs, and sends no telemetry.
+- **Auditable Win32 usage:** Only calls `user32.dll` (Click-Through and global hotkeys) and `gdi32.dll` (safe GDI handle cleanup when copying screenshots to clipboard).
 
-Consulta [SECURITY.md](SECURITY.md) para más detalles.
+See [SECURITY.md](SECURITY.md) for the full security policy.
 
 ---
 
-## Compilación desde el Código Fuente
+## Build from Source
 
-### Requisitos
+### Prerequisites
 - Windows 10 / 11 (x64)
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (o superior)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (or newer)
 
-### Ejecutar en modo desarrollo
+### Run in development
 ```powershell
 dotnet run
 ```
 
-### Generar ejecutable único autocontenido (`TickPen.exe`)
+### Publish single-file self-contained `TickPen.exe`
 ```powershell
 dotnet publish -c Release -r win-x64 --self-contained true `
   -p:PublishSingleFile=true `
@@ -77,16 +92,14 @@ dotnet publish -c Release -r win-x64 --self-contained true `
   -o .\publish\win-x64
 ```
 
-El ejecutable final quedará en `.\publish\win-x64\TickPen.exe` (no requiere que el usuario tenga instalado .NET).
-
-### Generar instalador para Windows (Opcional)
-Con [Inno Setup 6](https://jrsoftware.org/isinfo.php) instalado:
+### Build the Windows Setup Wizard (Optional)
+With [Inno Setup 6](https://jrsoftware.org/isinfo.php) installed:
 ```powershell
-& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" .\Installer\TickPen.iss
+& "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" .\Installer\TickPen.iss
 ```
 
 ---
 
-## Licencia
+## License
 
-Distribuido bajo licencia **MIT**. Consulta el archivo [LICENSE](LICENSE) para más información.
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for more information.
